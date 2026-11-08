@@ -4,6 +4,10 @@ Split a restaurant bill and its tip among people, to the cent.
 
 Python 3.12, standard library only.
 
+## Installation
+
+<!-- Stub from /gabe-init (CLI project type). .kdbp/DOCS.md maps pyproject.toml → this section. -->
+
 ## Usage
 
 ```
@@ -27,6 +31,10 @@ Total: 132.55 (tip 12.05)
 
 The shares always add up exactly to the bill plus the tip. Cents that do not divide
 evenly go to the first payers, one each. See [docs/design.md](docs/design.md).
+
+## Commands
+
+<!-- Stub from /gabe-init (CLI project type). .kdbp/DOCS.md maps CLI source → this section. -->
 
 ## Development
 

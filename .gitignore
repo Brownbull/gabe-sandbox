@@ -6,3 +6,13 @@ __pycache__/
 build/
 dist/
 .venv/
+.kdbp/reviews-archive/
+.kdbp/.push-gate-ok
+.kdbp/PULSE.jsonl
+.kdbp/map-deltas.jsonl
+.kdbp/map-deltas-rollup.jsonl
+docs/site/center/inflight.json
+docs/site/center/inflight.js
+docs/site/center/sim.data.js
+docs/site/center/commits.js
+docs/site/center/spine.js

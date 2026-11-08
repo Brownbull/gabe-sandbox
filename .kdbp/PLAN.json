@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "status": "active",
+  "project_type": "code",
+  "goal": "Weighted splits and currencies without cents",
+  "maturity": "mvp",
+  "created": "2026-11-07",
+  "last_updated": "2026-11-07",
+  "current_phase": "1",
+  "phases": [
+    {
+      "id": "1",
+      "name": "Even split",
+      "tier": "mvp",
+      "complexity": "low",
+      "types": [
+        "core-only"
+      ],
+      "cells": {
+        "exec": "done",
+        "review": "done",
+        "commit": "done",
+        "push": "done"
+      },
+      "proof": null,
+      "proof_type": null,
+      "cases": null,
+      "review": null,
+      "scope": [
+        "tiptally/split.py",
+        "tiptally/cli.py",
+        "tests/test_split.py",
+        "tests/test_cli.py"
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Weighted split",
+      "tier": "mvp",
+      "complexity": "med",
+      "types": [
+        "core-only"
+      ],
+      "cells": {
+        "exec": "todo",
+        "review": "todo",
+        "commit": "todo",
+        "push": "todo"
+      },
+      "proof": null,
+      "proof_type": null,
+      "cases": null,
+      "review": null,
+      "scope": [
+        "tiptally/split.py",
+        "tiptally/cli.py",
+        "tests/test_split.py",
+        "tests/test_cli.py",
+        "README.md"
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Currencies by minor unit",
+      "tier": "mvp",
+      "complexity": "med",
+      "types": [
+        "core-only"
+      ],
+      "cells": {
+        "exec": "todo",
+        "review": "todo",
+        "commit": "todo",
+        "push": "todo"
+      },
+      "proof": null,
+      "proof_type": null,
+      "cases": null,
+      "review": null,
+      "scope": [
+        "tiptally/currencies.py",
+        "tiptally/split.py",
+        "tiptally/cli.py",
+        "tests/test_vectors.py",
+        "README.md",
+        "docs/design.md"
+      ]
+    }
+  ]
+}
