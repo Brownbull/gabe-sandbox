@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tiptally"
+version = "0.1.0"
+description = "Split a restaurant bill and its tip among people, to the cent."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+tiptally = "tiptally.cli:main"
+
+[tool.setuptools]
+packages = ["tiptally"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
