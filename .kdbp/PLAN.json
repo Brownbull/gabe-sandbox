@@ -6,7 +6,7 @@
   "maturity": "mvp",
   "created": "2026-11-07",
   "last_updated": "2026-11-07",
-  "current_phase": "1",
+  "current_phase": "2",
   "phases": [
     {
       "id": "1",
@@ -42,10 +42,10 @@
         "core-only"
       ],
       "cells": {
-        "exec": "todo",
-        "review": "todo",
-        "commit": "todo",
-        "push": "todo"
+        "exec": "done",
+        "review": "done",
+        "commit": "done",
+        "push": "done"
       },
       "proof": null,
       "proof_type": null,

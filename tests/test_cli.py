@@ -66,3 +66,21 @@ def test_module_entry_point():
         check=True,
     )
     assert result.stdout.splitlines()[0] == "Person 1: 33.14"
+
+
+def test_weights_split_in_proportion(capsys):
+    assert main(["100", "3", "--tip", "10", "--weights", "2,1,1"]) == 0
+    lines = capsys.readouterr().out.splitlines()
+    assert lines == [
+        "Person 1: 55.00",
+        "Person 2: 27.50",
+        "Person 3: 27.50",
+        "Total: 110.00 (tip 10.00)",
+    ]
+
+
+def test_weights_must_match_the_number_of_people(capsys):
+    with pytest.raises(SystemExit) as exc:
+        main(["100", "3", "--weights", "2,1"])
+    assert exc.value.code == 2
+    assert "expected 3 weights, got 2" in capsys.readouterr().err

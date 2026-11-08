@@ -3,7 +3,7 @@
 import argparse
 from decimal import Decimal, InvalidOperation
 
-from tiptally.split import split_even
+from tiptally.split import split_even, split_weighted
 
 
 def parse_amount(text: str) -> int:
@@ -26,6 +26,14 @@ def format_amount(cents: int) -> str:
     return f"{units}.{rest:02d}"
 
 
+def parse_weights(text: str) -> list[int]:
+    """Parse ``2,1,1`` into ``[2, 1, 1]``."""
+    try:
+        return [int(part) for part in text.split(",")]
+    except ValueError:
+        raise ValueError(f"weights must be whole numbers separated by commas: {text!r}") from None
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="tiptally",
@@ -36,6 +44,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--tip", type=int, default=0, metavar="PCT", help="tip percentage (default: 0)"
     )
+    parser.add_argument(
+        "--weights",
+        metavar="W1,W2,...",
+        help="split in proportion to these whole-number weights, one per person (e.g. 2,1,1)",
+    )
     return parser
 
 
@@ -44,7 +57,13 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         total_cents = parse_amount(args.amount)
-        shares = split_even(total_cents, args.people, args.tip)
+        if args.weights is None:
+            shares = split_even(total_cents, args.people, args.tip)
+        else:
+            weights = parse_weights(args.weights)
+            if len(weights) != args.people:
+                raise ValueError(f"expected {args.people} weights, got {len(weights)}")
+            shares = split_weighted(total_cents, weights, args.tip)
     except ValueError as exc:
         parser.error(str(exc))
     for number, share in enumerate(shares, start=1):

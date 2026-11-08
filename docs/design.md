@@ -29,3 +29,17 @@ payers pay one cent more than the base share, so:
 
 Example: `12050` cents with a 10% tip is `13255`; `13255 = 4 * 3313 + 3`, so the shares are
 `3314, 3314, 3314, 3313`.
+
+### Weighted shares
+
+`split_weighted(total_cents, weights, tip_pct)` uses the same tip and the same grand total.
+Each payer's exact share is `grand_total * weight / sum(weights)`. Every share is rounded
+down, and the cents left over go one each to the payers whose exact share lost the most to the
+rounding (largest remainder); on a tie the earlier payer wins. The remainder is compared as an
+integer, `grand_total * weight % sum(weights)`, so there is no float comparison.
+
+With equal weights every remainder is equal, the tie rule gives the extra cents to the first
+payers, and the result is identical to `split_even`.
+
+Example: `100` cents split `1:2` is `33.33` and `66.67`; the second payer lost more, so the shares
+are `33, 67`.

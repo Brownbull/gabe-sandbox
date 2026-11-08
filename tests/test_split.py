@@ -1,6 +1,6 @@
 import pytest
 
-from tiptally.split import split_even
+from tiptally.split import split_even, split_weighted
 
 
 def test_even_split_without_tip():
@@ -59,3 +59,39 @@ def test_negative_total_is_rejected():
 def test_negative_tip_is_rejected():
     with pytest.raises(ValueError):
         split_even(1000, 2, -5)
+
+
+def test_weighted_split_follows_the_weights():
+    assert split_weighted(10000, [2, 1, 1], 0) == [5000, 2500, 2500]
+
+
+
+def test_equal_weights_match_the_even_split():
+    for total in (1, 100, 12050, 99999):
+        assert split_weighted(total, [1, 1, 1, 1], 15) == split_even(total, 4, 15)
+
+
+def test_weighted_leftover_goes_to_the_largest_remainder():
+    # 100 split 1:2 is 33.33 / 66.67 -> the second payer lost more, so gets the cent
+    assert split_weighted(100, [1, 2], 0) == [33, 67]
+
+
+def test_weighted_ties_go_to_the_first_payer():
+    assert split_weighted(100, [1, 1, 1], 0) == [34, 33, 33]
+
+
+@pytest.mark.parametrize("weights", [[1], [3, 1], [5, 2, 2], [1, 1, 1, 7], [10, 1, 1, 1, 1]])
+def test_weighted_shares_add_up(weights):
+    shares = split_weighted(12345, weights, 18)
+    assert sum(shares) == 12345 + (12345 * 18 + 50) // 100
+    assert len(shares) == len(weights)
+
+
+def test_empty_weights_are_rejected():
+    with pytest.raises(ValueError, match="weights must not be empty"):
+        split_weighted(1000, [], 10)
+
+
+def test_zero_weight_is_rejected():
+    with pytest.raises(ValueError, match="at least 1"):
+        split_weighted(1000, [2, 0], 10)

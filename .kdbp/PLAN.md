@@ -19,7 +19,7 @@ Weighted splits and currencies without cents
 | # | Phase | Description | Types | Tier | Complexity | Exec | Review | Commit | Push |
 |---|-------|-------------|-------|------|------------|------|--------|--------|------|
 | 1 | Even split | Split a bill and its tip evenly, to the cent (what the base already ships) | core-only | mvp | low | ✅ | ✅ | ✅ | ✅ |
-| 2 | Weighted split | `split_weighted(total_cents, weights, tip_pct)` and a `--weights 2,1,1` flag, with tests and README | core-only | mvp | med | ⬜ | ⬜ | ⬜ | ⬜ |
+| 2 | Weighted split | `split_weighted(total_cents, weights, tip_pct)` and a `--weights 2,1,1` flag, with tests and README | core-only | mvp | med | ✅ | ✅ | ✅ | ✅ |
 | 3 | Currencies by minor unit | 0-decimal (JPY, CLP, KRW, ISK, VND) and 3-decimal (KWD, BHD, OMR, JOD, TND) currencies through a `--currency` flag | core-only | mvp | med | ⬜ | ⬜ | ⬜ | ⬜ |
 
 <!-- Exec is written by /gabe-execute: ⬜ not started, 🔄 in progress, ✅ complete -->
@@ -102,7 +102,7 @@ decisions_entry: D4
 
 ## Current Phase
 
-Phase 1: Even split
+Phase 2: Weighted split
 
 ## Dependencies
 
