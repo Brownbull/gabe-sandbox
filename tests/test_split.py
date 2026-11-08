@@ -95,3 +95,11 @@ def test_empty_weights_are_rejected():
 def test_zero_weight_is_rejected():
     with pytest.raises(ValueError, match="at least 1"):
         split_weighted(1000, [2, 0], 10)
+
+
+@pytest.mark.parametrize("minor_unit", [-1, 4])
+def test_minor_unit_outside_zero_to_three_is_rejected(minor_unit):
+    with pytest.raises(ValueError, match="minor unit"):
+        split_even(1000, 2, 10, minor_unit)
+    with pytest.raises(ValueError, match="minor unit"):
+        split_weighted(1000, [1, 1], 10, minor_unit)

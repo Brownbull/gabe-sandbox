@@ -3,27 +3,30 @@
 import argparse
 from decimal import Decimal, InvalidOperation
 
+from tiptally.currencies import DEFAULT_MINOR_UNIT, minor_unit_for
 from tiptally.split import split_even, split_weighted
 
 
-def parse_amount(text: str) -> int:
-    """Parse a decimal amount such as ``120.50`` into whole cents."""
+def parse_amount(text: str, minor_unit: int = DEFAULT_MINOR_UNIT) -> int:
+    """Parse a decimal amount such as ``120.50`` into whole minor units (cents)."""
     try:
         value = Decimal(text)
     except InvalidOperation:
         raise ValueError(f"not a valid amount: {text!r}") from None
     if not value.is_finite() or value < 0:
         raise ValueError(f"amount must be a non-negative number: {text!r}")
-    cents = value * 100
-    if cents != cents.to_integral_value():
-        raise ValueError(f"amount has more than two decimals: {text!r}")
-    return int(cents)
+    minor = value * 10**minor_unit
+    if minor != minor.to_integral_value():
+        raise ValueError(f"amount has more than {minor_unit} decimals: {text!r}")
+    return int(minor)
 
 
-def format_amount(cents: int) -> str:
-    """Format whole cents as ``units.cc``."""
-    units, rest = divmod(cents, 100)
-    return f"{units}.{rest:02d}"
+def format_amount(cents: int, minor_unit: int = DEFAULT_MINOR_UNIT) -> str:
+    """Format whole minor units as ``units.cc`` (``units`` alone for a 0-decimal currency)."""
+    if minor_unit == 0:
+        return str(cents)
+    units, rest = divmod(cents, 10**minor_unit)
+    return f"{units}.{rest:0{minor_unit}d}"
 
 
 def parse_weights(text: str) -> list[int]:
@@ -49,6 +52,11 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="W1,W2,...",
         help="split in proportion to these whole-number weights, one per person (e.g. 2,1,1)",
     )
+    parser.add_argument(
+        "--currency",
+        metavar="CODE",
+        help="currency of AMOUNT, for example JPY or KWD (default: two decimals)",
+    )
     return parser
 
 
@@ -56,18 +64,20 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     try:
-        total_cents = parse_amount(args.amount)
+        minor_unit = DEFAULT_MINOR_UNIT if args.currency is None else minor_unit_for(args.currency)
+        total_cents = parse_amount(args.amount, minor_unit)
         if args.weights is None:
-            shares = split_even(total_cents, args.people, args.tip)
+            shares = split_even(total_cents, args.people, args.tip, minor_unit)
         else:
             weights = parse_weights(args.weights)
             if len(weights) != args.people:
                 raise ValueError(f"expected {args.people} weights, got {len(weights)}")
-            shares = split_weighted(total_cents, weights, args.tip)
+            shares = split_weighted(total_cents, weights, args.tip, minor_unit)
     except ValueError as exc:
         parser.error(str(exc))
     for number, share in enumerate(shares, start=1):
-        print(f"Person {number}: {format_amount(share)}")
+        print(f"Person {number}: {format_amount(share, minor_unit)}")
     grand_total = sum(shares)
-    print(f"Total: {format_amount(grand_total)} (tip {format_amount(grand_total - total_cents)})")
+    tip_amount = format_amount(grand_total - total_cents, minor_unit)
+    print(f"Total: {format_amount(grand_total, minor_unit)} (tip {tip_amount})")
     return 0

@@ -84,3 +84,43 @@ def test_weights_must_match_the_number_of_people(capsys):
         main(["100", "3", "--weights", "2,1"])
     assert exc.value.code == 2
     assert "expected 3 weights, got 2" in capsys.readouterr().err
+
+
+def test_yen_has_no_decimals(capsys):
+    assert main(["12500", "4", "--tip", "10", "--currency", "JPY"]) == 0
+    lines = capsys.readouterr().out.splitlines()
+    assert lines == [
+        "Person 1: 3438",
+        "Person 2: 3438",
+        "Person 3: 3437",
+        "Person 4: 3437",
+        "Total: 13750 (tip 1250)",
+    ]
+
+
+def test_kuwaiti_dinar_has_three_decimals(capsys):
+    assert main(["12.5", "4", "--tip", "15", "--currency", "KWD"]) == 0
+    lines = capsys.readouterr().out.splitlines()
+    assert lines[0] == "Person 1: 3.594"
+    assert lines[-1] == "Total: 14.375 (tip 1.875)"
+
+
+def test_yen_amount_with_decimals_is_rejected(capsys):
+    with pytest.raises(SystemExit) as exc:
+        main(["12.5", "2", "--currency", "JPY"])
+    assert exc.value.code == 2
+    assert "more than 0 decimals" in capsys.readouterr().err
+
+
+def test_unknown_currency_is_a_usage_error(capsys):
+    with pytest.raises(SystemExit) as exc:
+        main(["10", "2", "--currency", "XYZ"])
+    assert exc.value.code == 2
+    assert "unknown currency" in capsys.readouterr().err
+
+
+def test_format_and_parse_follow_the_minor_unit():
+    assert parse_amount("1.234", 3) == 1234
+    assert format_amount(1234, 3) == "1.234"
+    assert format_amount(7, 3) == "0.007"
+    assert format_amount(1234, 0) == "1234"
